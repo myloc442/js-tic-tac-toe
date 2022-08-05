@@ -43,7 +43,7 @@ export function checkGameStatus(cellValues) {
   // Please feel free to add more helper function if you want.
   // It's not required to write everything just in this function.
   if (!Array.isArray(cellValues) || cellValues.length !== 9) {
-    throw new Error('Error ! Invalid cell values');
+    throw new Error('Invalid cell values');
   }
 
   const winSetIndexList = [
