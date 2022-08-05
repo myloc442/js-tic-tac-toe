@@ -5,6 +5,7 @@ import {
   getCurrentTurnElement,
   getGameStatusElement,
   getReplayButtonElement,
+  getUlElement,
 } from './selectors.js';
 import { checkGameStatus } from './utils.js';
 
@@ -107,8 +108,21 @@ function handleCellClick(cell, index) {
 function initCellElementList() {
   const cellElementList = getCellElementList();
 
+  // XXX Event delegation
+  // Thay vì dùng vòng lặp gắn sự kiện cho các li
   cellElementList.forEach((cell, index) => {
-    cell.addEventListener('click', () => handleCellClick(cell, index));
+    cell.dataset.index = index;
+  });
+
+  const cellListElement = getUlElement();
+  if (!cellListElement) return;
+
+  cellListElement.addEventListener('click', (event) => {
+    const cellElement = event.target;
+    if (cellElement.tagName !== 'LI') return;
+
+    const index = Number.parseInt(cellElement.dataset.index);
+    handleCellClick(cellElement, index);
   });
 }
 
@@ -132,7 +146,7 @@ function initReplayButton() {
   const replayButtonElement = getReplayButtonElement();
 
   if (!replayButtonElement) {
-    throw new Error('Can not find replay button !');
+    throw new Error('can not find replay button !');
   }
 
   replayButtonElement.addEventListener('click', resetGame);
