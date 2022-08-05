@@ -11,7 +11,7 @@ import { checkGameStatus } from './utils.js';
 /**
  * Global variables
  */
-let currentTurn = 'cross';
+let currentTurn = TURN.CROSS;
 let gameStatus = GAME_STATUS.PLAYING;
 let cellValues = new Array(9).fill('');
 
@@ -30,15 +30,19 @@ let cellValues = new Array(9).fill('');
  * 4. On replay button click --> reset game to play again.
  *
  */
-function toggleTurn() {
-  // toggle turn
-  currentTurn = currentTurn === TURN.CIRCLE ? TURN.CROSS : TURN.CIRCLE;
-
+function setValueTurn(turn) {
   const turnElement = getCurrentTurnElement();
   if (!turnElement) return;
 
   turnElement.classList.remove(TURN.CROSS, TURN.CIRCLE);
   turnElement.classList.add(currentTurn);
+}
+
+function toggleTurn() {
+  // toggle turn
+  currentTurn = currentTurn === TURN.CIRCLE ? TURN.CROSS : TURN.CIRCLE;
+
+  setValueTurn(currentTurn);
 }
 
 function updateContentStatus(status) {
@@ -51,6 +55,11 @@ function updateContentStatus(status) {
 function showReplayButton() {
   const replayButtonElement = getReplayButtonElement();
   if (replayButtonElement) replayButtonElement.classList.add('show');
+}
+
+function hideReplayButton() {
+  const replayButtonElement = getReplayButtonElement();
+  if (replayButtonElement) replayButtonElement.classList.remove('show');
 }
 
 function highLightCellWin(winPositions) {
@@ -103,6 +112,35 @@ function initCellElementList() {
   });
 }
 
+function resetGame() {
+  console.log('click replay button');
+
+  currentTurn = TURN.CROSS;
+  gameStatus = GAME_STATUS.PLAYING;
+  cellValues = cellValues.map(() => '');
+
+  updateContentStatus(gameStatus);
+  setValueTurn(TURN.CROSS);
+
+  const cellElementList = getCellElementList();
+  for (const cell of cellElementList) {
+    cell.className = '';
+  }
+
+  hideReplayButton();
+}
+
+function initReplayButton() {
+  const replayButtonElement = getReplayButtonElement();
+
+  if (!replayButtonElement) {
+    throw new Error('can not find replay button !');
+  }
+
+  replayButtonElement.addEventListener('click', resetGame);
+}
+
 (() => {
   initCellElementList();
+  initReplayButton();
 })();
